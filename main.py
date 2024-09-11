@@ -46,20 +46,47 @@ def de(*a):	# distance
 class Sw:
 	def __init__(s, so: So) -> None:
 		s.so=so
-		s.le = c.create_line((s.so.x+m.c(s.so.di)*s.so.r*2, s.so.y-m.s(s.so.di)*s.so.r*2), (s.so.x+m.c(s.so.di)*s.so.r*3, s.so.y-m.s(s.so.di)*s.so.r*3))
+		s.le = c.create_line(0,0,0,0)
 		s.x=s.vx=0
 	def u(s):
 		s.vx/=2
 		s.vx -= s.x / 9
 		s.x += s.vx
-		sde = s.so.r*2 + s.x;	st = s.so.x+m.c(s.so.di)*sde,	s.so.y-m.s(s.so.di)*sde
-		ede = s.so.r*3 + s.x;	en = s.so.x+m.c(s.so.di)*ede,	s.so.y-m.s(s.so.di)*ede
+		sde = s.x;	st = s.so.x+m.c(s.so.di)*sde + m.c(s.so.di - p/2)*s.so.r,	s.so.y-m.s(s.so.di)*sde - m.s(s.so.di - p/2)*s.so.r
+		ede = s.so.r*4 + s.x;	en = s.so.x+m.c(s.so.di)*ede + m.c(s.so.di - p/2)*s.so.r,	s.so.y-m.s(s.so.di)*ede - m.s(s.so.di - p/2)*s.so.r
 		for so in So.lt:
-			if de(so, en) < so.r:	c.itemconfig(so.b, outline=co, fill=co)
+			if de(so, en) < so.r:	c.itemconfig(so.b, fill=co)
 		c.coords(s.le, *st, *en)
-	def a(s):
-		s.vx = 11
+	def sw(s):
+		s.vx = 22
 
+class J:
+	def __init__(se,so,*a) -> None:
+		so.js.add(se)
+		se.so=so
+		se.a=a
+		match a:
+			case "at",so,to:
+				se.to=to
+	def e(se):
+		_js=set()
+		match se.a:
+			case "wt", x, y:
+				se.so.di = m.at(x-se.so.x, y-se.so.y)
+				se.so.s()
+				if de(se.so, x,y) > 8:	_js.add(se)
+			case "at",so,to:
+				if de(se.so, so) > 64:
+					se.so.di = m.at(so.x-se.so.x, so.y-se.so.y)
+					se.so.s()
+				elif se.to<0:
+					se.to=9
+					se.so.di = m.at(so.x-se.so.x, so.y-se.so.y) + .1
+					se.so.sw.sw()
+				se.to-=1
+				print(se.to)
+				_js.add(se)
+		se.so.js = _js
 class So:
 	lt=[]
 	def __init__(s) -> None:
@@ -74,12 +101,8 @@ class So:
 		s.js = set()
 
 	def u(s):
-		_js=set()
 		for j in s.js:
-			s.di = m.at(j[0]-s.x, j[1]-s.y)
-			s.s()
-			if de(s, j[0],j[1]) > 8:	_js.add(j)
-		s.js = _js
+			j.e()
 
 		fc = 2
 		if s.vx:
@@ -101,13 +124,19 @@ class So:
 
 	def s(s, x=None, y=None):
 		if x:	s.di = m.at(x-s.x, y-s.y)
-		ss=9
+		ss=2
 		s.vx += m.c(s.di)*ss
 		s.vy -= m.s(s.di)*ss
-	def wt(s, x,y):
-		s.js.add((x,y))
+	def wt(s, *lo):
+		if len(lo)==1:
+			s.j("wt",lo[0].x,lo[0].y)
+		else:
+			s.j("wt",*lo)
+	def at(se,so):
+		se.j("at",so,0)
+	def j(s,*a):	J(s,*a)
 
-fps = c.create_text(222, 333, text="", font=("Times New Roman", 22))
+fps = c.create_text(222, 377, text="", font=("Times New Roman", 22))
 t0=t.m();	td=mspf
 def u():
 	global t0,td
@@ -122,9 +151,16 @@ def u():
 # Set up the window
 w.title("2d Armies Battle")
 
-n=9
+n=1
 for i in range(n):	So()
 s=So()
+
+for so1 in So.lt:
+	for so2 in So.lt:
+		if so2 is so1:	continue
+		so1.at(so2)
+		break
+
 
 def eh(event: tk.Event):
 	match event.keysym:
@@ -140,7 +176,7 @@ w.bind("<Right>", eh)
 
 w.bind("<Button-1>", lambda e: s.wt(e.x, e.y))
 w.bind("<Button-2>", lambda e: s.s(e.x, e.y))
-w.bind("<Button-3>", lambda e: s.sw.a())
+w.bind("<Button-3>", lambda e: s.sw.sw())
 
 c.pack()
 
