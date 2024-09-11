@@ -6,6 +6,8 @@ p = 3.14159
 def at(x,y):
 	return m.atan2(-y,x) 
 m.at = at
+m.c = m.cos
+m.s = m.sin
 
 """
 abc
@@ -15,63 +17,114 @@ a.b.c
 """
 
 ws=400
-d=20
+mspf=20
 w = tk.Tk()
 c = tk.Canvas(w, width=ws, height=ws)
 
-class S:
-	l=[]
-	def __init__(se) -> None:
-		se.l.append(se)
-		se.r = 9
-		se.x = r.r()*ws;	se.y = r.r()*ws
-		se.d = m.at(200-se.x, 200-se.y)
-		se.vx = 0;	se.vy = 0
-		se.ar = c.create_arc(se.x-se.r, se.y-se.r, se.x+se.r, se.y+se.r, start=se.d*360/2/p, extent=359)
-		se.js = set()
+co = f'#{r.randint(0, 255):02x}{r.randint(0, 255):02x}{r.randint(0, 255):02x}'
 
-	def u(se):
-		for j in se.js:
-			se.d = m.at(j[0]-se.x, j[1]-se.y)
-			c.itemconfig(se.ar, start=se.d*360/2/p)
-		se.js.clear()
+class So:pass
 
-		if se.vx:
-			se.vx -= se.vx / abs(se.vx) / 100
-			se.x += se.vx
-			c.move(se.ar, se.vx, 0)
-		if se.vy:
-			se.vy -= se.vy / abs(se.vy) / 100
-			se.y += se.vy
-			c.move(se.ar, 0, se.vy)
-	def wt(se, x,y):
-		se.js.add((x,y))
+def de(*a):	# distance
+	lt=[]
+	for e in a:
+		if type(e)==So:
+			lt.append(e.x)
+			lt.append(e.y)
+		elif type(e) == tuple or type(e) == list:
+			lt.append(e[0])
+			lt.append(e[1])
+		else:
+			lt.append(e)
+	try:
+		return ((lt[0]-lt[2])**2 + (lt[1]-lt[3])**2)**0.5
+	except Exception as ex:
+		print(ex)
+		print(a)
+		print(lt)
 
-fps = c.create_text(333, 333, text=0, font=("Arial", 20))
-t0=t.m();	td=d
+class Sw:
+	def __init__(s, so: So) -> None:
+		s.so=so
+		s.le = c.create_line((s.so.x+m.c(s.so.di)*s.so.r*2, s.so.y-m.s(s.so.di)*s.so.r*2), (s.so.x+m.c(s.so.di)*s.so.r*3, s.so.y-m.s(s.so.di)*s.so.r*3))
+		s.x=s.vx=0
+	def u(s):
+		s.vx/=2
+		s.vx -= s.x / 9
+		s.x += s.vx
+		sde = s.so.r*2 + s.x;	st = s.so.x+m.c(s.so.di)*sde,	s.so.y-m.s(s.so.di)*sde
+		ede = s.so.r*3 + s.x;	en = s.so.x+m.c(s.so.di)*ede,	s.so.y-m.s(s.so.di)*ede
+		for so in So.lt:
+			if de(so, en) < so.r:	c.itemconfig(so.b, outline=co, fill=co)
+		c.coords(s.le, *st, *en)
+	def a(s):
+		s.vx = 11
+
+class So:
+	lt=[]
+	def __init__(s) -> None:
+		s.lt.append(s)
+		s.r = 9
+		sc = 9
+		s.x = ws/sc + r.r()*ws/sc*(sc-2);	s.y = ws/sc + r.r()*ws/sc*(sc-2)
+		s.di = m.at(200-s.x, 200-s.y)
+		s.vx = 0;	s.vy = 0
+		s.b = c.create_arc(s.x-s.r, s.y-s.r, s.x+s.r, s.y+s.r, start=s.di*360/2/p, extent=359)
+		s.sw = Sw(s)
+		s.js = set()
+
+	def u(s):
+		_js=set()
+		for j in s.js:
+			s.di = m.at(j[0]-s.x, j[1]-s.y)
+			s.s()
+			if de(s, j[0],j[1]) > 8:	_js.add(j)
+		s.js = _js
+
+		fc = 2
+		if s.vx:
+			s.vx /= fc
+			s.x += s.vx
+		if s.vy:
+			s.vy /= fc
+			s.y += s.vy
+		c.move(s.b, s.vx, s.vy)
+		c.itemconfig(s.b, start=s.di*360/2/p)
+		s.sw.u()
+		for s1 in So.lt:
+			if not s is s1 and de(s,s1) < s.r+s1.r:
+				rc = 1
+				s1.vx = (s1.x - s.x) * rc
+				s1.vy = (s1.y - s.y) * rc
+				s.vx = (s.x - s1.x) * rc
+				s.vy = (s.y - s1.y) * rc
+
+	def s(s, x=None, y=None):
+		if x:	s.di = m.at(x-s.x, y-s.y)
+		ss=9
+		s.vx += m.c(s.di)*ss
+		s.vy -= m.s(s.di)*ss
+	def wt(s, x,y):
+		s.js.add((x,y))
+
+fps = c.create_text(222, 333, text="", font=("Times New Roman", 22))
+t0=t.m();	td=mspf
 def u():
 	global t0,td
-	td = (t.m()-t0 + td) / 2
-	c.itemconfig(fps, text= round(td*1000))
+	sm=9
+	td = (t.m()-t0)/sm + td*(sm-1)/sm
+	c.itemconfig(fps, text= f"{round(td*1000)} ms per frame")
 	t0 = t.m()
-	for s0 in S.l:
-		s0.u()
-		for s1 in S.l:
-			if not s0 is s1 and ((s0.x - s1.x) ** 2 + (s0.y - s1.y) ** 2)**.5 < s0.r+s1.r:
-				s1.vx -= (s0.x - s1.x) / 100
-				s1.vy -= (s0.y - s1.y) / 100
-				s0.vx += (s0.x - s1.x) / 100
-				s0.vy += (s0.y - s1.y) / 100
-				s0.wt(s1.x,s1.y)
-				s1.wt(s0.x,s0.y)
-	w.after(d, u)
+	
+	for so in So.lt:	so.u()
+	w.after(mspf, u)
 
 # Set up the window
-w.title("total war")
+w.title("2d Armies Battle")
 
-n=10
-for i in range(n):	S()
-s=S()
+n=9
+for i in range(n):	So()
+s=So()
 
 def eh(event: tk.Event):
 	match event.keysym:
@@ -84,6 +137,10 @@ w.bind("<Up>", eh)
 w.bind("<Down>", eh)
 w.bind("<Left>", eh)
 w.bind("<Right>", eh)
+
+w.bind("<Button-1>", lambda e: s.wt(e.x, e.y))
+w.bind("<Button-2>", lambda e: s.s(e.x, e.y))
+w.bind("<Button-3>", lambda e: s.sw.a())
 
 c.pack()
 
