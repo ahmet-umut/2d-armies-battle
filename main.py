@@ -151,32 +151,23 @@ def u():
 # Set up the window
 w.title("2d Armies Battle")
 
-n=1
+n=9
 for i in range(n):	So()
-s=So()
-
-for so1 in So.lt:
-	for so2 in So.lt:
-		if so2 is so1:	continue
-		so1.at(so2)
-		break
+s = So.lt[0]
 
 
-def eh(event: tk.Event):
-	match event.keysym:
-		case 'Left': s.vx = -1
-		case 'Right': s.vx = 1
-		case 'Up': s.vy = -1
-		case 'Down': s.vy = 1
-
-w.bind("<Up>", eh)
-w.bind("<Down>", eh)
-w.bind("<Left>", eh)
-w.bind("<Right>", eh)
 
 w.bind("<Button-1>", lambda e: s.wt(e.x, e.y))
 w.bind("<Button-2>", lambda e: s.s(e.x, e.y))
 w.bind("<Button-3>", lambda e: s.sw.sw())
+
+def eh(e):
+	for so1 in So.lt:
+		so2 = So.lt[r.randint(0, n-1)]
+		if so1 is not so2:
+			so1.at(so2)
+w.bind("<space>", eh)
+
 
 c.pack()
 
