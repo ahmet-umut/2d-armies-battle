@@ -36,12 +36,7 @@ def de(*a):	# distance
 			lt.append(e[1])
 		else:
 			lt.append(e)
-	try:
-		return ((lt[0]-lt[2])**2 + (lt[1]-lt[3])**2)**0.5
-	except Exception as ex:
-		print(ex)
-		print(a)
-		print(lt)
+	return ((lt[0]-lt[2])**2 + (lt[1]-lt[3])**2)**0.5
 
 class Sw:
 	def __init__(s, so: So) -> None:
@@ -55,7 +50,7 @@ class Sw:
 		sde = s.x;	st = s.so.x+m.c(s.so.di)*sde + m.c(s.so.di - p/2)*s.so.r,	s.so.y-m.s(s.so.di)*sde - m.s(s.so.di - p/2)*s.so.r
 		ede = s.so.r*4 + s.x;	en = s.so.x+m.c(s.so.di)*ede + m.c(s.so.di - p/2)*s.so.r,	s.so.y-m.s(s.so.di)*ede - m.s(s.so.di - p/2)*s.so.r
 		for so in So.lt:
-			if de(so, en) < so.r:	c.itemconfig(so.b, fill=co)
+			if de(so, en) < so.r:	c.itemconfig(so.b, outline=co)
 		c.coords(s.le, *st, *en)
 	def sw(s):
 		s.vx = 22
@@ -84,21 +79,22 @@ class J:
 					se.so.di = m.at(so.x-se.so.x, so.y-se.so.y) + .1
 					se.so.sw.sw()
 				se.to-=1
-				print(se.to)
 				_js.add(se)
 		se.so.js = _js
 class So:
 	lt=[]
-	def __init__(s) -> None:
-		s.lt.append(s)
-		s.r = 9
+	def __init__(se) -> None:
+		se.lt.append(se)
+		se.r = 9
 		sc = 9
-		s.x = ws/sc + r.r()*ws/sc*(sc-2);	s.y = ws/sc + r.r()*ws/sc*(sc-2)
-		s.di = m.at(200-s.x, 200-s.y)
-		s.vx = 0;	s.vy = 0
-		s.b = c.create_arc(s.x-s.r, s.y-s.r, s.x+s.r, s.y+s.r, start=s.di*360/2/p, extent=359)
-		s.sw = Sw(s)
-		s.js = set()
+		se.x = ws/sc + r.r()*ws/sc*(sc-2);	se.y = ws/sc + r.r()*ws/sc*(sc-2)
+		se.di = m.at(200-se.x, 200-se.y)
+		se.vx = 0;	se.vy = 0
+		se.sw = Sw(se)
+		se.js = set()
+		se.f="#222222"
+		se.sed = 0
+		se.b = c.create_arc(se.x-se.r, se.y-se.r, se.x+se.r, se.y+se.r, start=se.di*360/2/p, extent=359, fill=se.f)
 
 	def u(s):
 		for j in s.js:
@@ -112,7 +108,7 @@ class So:
 			s.vy /= fc
 			s.y += s.vy
 		c.move(s.b, s.vx, s.vy)
-		c.itemconfig(s.b, start=s.di*360/2/p)
+		c.itemconfig(s.b, start=s.di*360/2/p, fill=s.f)
 		s.sw.u()
 		for s1 in So.lt:
 			if not s is s1 and de(s,s1) < s.r+s1.r:
@@ -122,11 +118,11 @@ class So:
 				s.vx = (s.x - s1.x) * rc
 				s.vy = (s.y - s1.y) * rc
 
-	def s(s, x=None, y=None):
-		if x:	s.di = m.at(x-s.x, y-s.y)
+	def s(se, x=None, y=None):	#step
+		if x:	se.di = m.at(x-se.x, y-se.y)
 		ss=2
-		s.vx += m.c(s.di)*ss
-		s.vy -= m.s(s.di)*ss
+		se.vx += m.c(se.di)*ss
+		se.vy -= m.s(se.di)*ss
 	def wt(s, *lo):
 		if len(lo)==1:
 			s.j("wt",lo[0].x,lo[0].y)
@@ -135,6 +131,11 @@ class So:
 	def at(se,so):
 		se.j("at",so,0)
 	def j(s,*a):	J(s,*a)
+	def st(se):
+		se.sed = not se.sed
+		match se.f:
+			case "#222222":	se.f="#ff0000"
+			case "#ff0000":	se.f="#222222"
 
 fps = c.create_text(222, 377, text="", font=("Times New Roman", 22))
 t0=t.m();	td=mspf
@@ -153,13 +154,20 @@ w.title("2d Armies Battle")
 
 n=9
 for i in range(n):	So()
-s = So.lt[0]
 
+se=None
+def eh1(e):
+	global se
+	if se:	se.st();	se=None
+	for so in So.lt:
+		if de(so, e.x, e.y) < so.r:
+			se=so
+			so.st()
+			break	#break for optimization
+w.bind("<Button-1>", eh1)
 
-
-w.bind("<Button-1>", lambda e: s.wt(e.x, e.y))
-w.bind("<Button-2>", lambda e: s.s(e.x, e.y))
-w.bind("<Button-3>", lambda e: s.sw.sw())
+w.bind("<Button-2>", lambda e: se.sw.sw())
+w.bind("<Button-3>", lambda e: se.wt(e.x,e.y))
 
 def eh(e):
 	for so1 in So.lt:
